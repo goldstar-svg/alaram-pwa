@@ -1,1 +1,106 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>다중 웹 알람</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="다중 알람">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; }
+        h1 { text-align: center; }
+        .alarm { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        label { min-width: 60px; }
+        input, select, button { font-size: 1em; }
+        .status { font-weight: bold; color: #333; margin-left: auto; }
+    </style>
+</head>
+<body>
+    <h1>다중 알람 설정</h1>
+    <div id="alarms"></div>
 
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('service-worker.js');
+        }
+
+        const sounds = [
+            {name: '벨소리 1', file: 'sound1.mp3'},
+            {name: '벨소리 2', file: 'sound2.mp3'},
+            {name: '벨소리 3', file: 'sound3.mp3'},
+            {name: '벨소리 4', file: 'sound4.mp3'},
+            {name: '벨소리 5', file: 'sound5.mp3'},
+            {name: '벨소리 6', file: 'sound6.mp3'},
+            {name: '벨소리 7', file: 'sound7.mp3'}
+        ];
+
+        const alarmContainer = document.getElementById('alarms');
+        for (let i = 1; i <= 12; i++) {
+            const alarmDiv = document.createElement('div');
+            alarmDiv.className = 'alarm';
+
+            const label = document.createElement('label');
+            label.textContent = `알람 ${i}:`;
+
+            const input = document.createElement('input');
+            input.type = 'number';
+            input.min = '1';
+            input.placeholder = '시간 입력';
+
+            const unitSelect = document.createElement('select');
+            ['초', '분', '시간'].forEach(unit => {
+                const option = document.createElement('option');
+                option.value = unit;
+                option.textContent = unit;
+                unitSelect.appendChild(option);
+            });
+
+            const soundSelect = document.createElement('select');
+            sounds.forEach(s => {
+                const option = document.createElement('option');
+                option.value = s.file;
+                option.textContent = s.name;
+                soundSelect.appendChild(option);
+            });
+
+            const button = document.createElement('button');
+            button.textContent = '시작';
+
+            const status = document.createElement('span');
+            status.className = 'status';
+
+            button.addEventListener('click', () => {
+                const value = parseFloat(input.value);
+                if (!value || value <= 0) {
+                    alert('1 이상의 값을 입력하세요.');
+                    return;
+                }
+                let ms = 0;
+                if (unitSelect.value === '초') ms = value * 1000;
+                if (unitSelect.value === '분') ms = value * 60 * 1000;
+                if (unitSelect.value === '시간') ms = value * 60 * 60 * 1000;
+
+                status.textContent = `${value}${unitSelect.value} 후 알람 예정`;
+
+                setTimeout(() => {
+                    const audio = new Audio(soundSelect.value);
+                    audio.play();
+                    alert(`⏰ 알람 ${i} 시간입니다!`);
+                    status.textContent = '알람 울림';
+                }, ms);
+            });
+
+            alarmDiv.appendChild(label);
+            alarmDiv.appendChild(input);
+            alarmDiv.appendChild(unitSelect);
+            alarmDiv.appendChild(soundSelect);
+            alarmDiv.appendChild(button);
+            alarmDiv.appendChild(status);
+            alarmContainer.appendChild(alarmDiv);
+        }
+    </script>
+</body>
+</html>
