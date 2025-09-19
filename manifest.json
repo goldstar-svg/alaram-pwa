@@ -1,20 +1,12 @@
 {
-  "name": "다중 알람",
+  "name": "반복 알람",
   "short_name": "알람",
-  "start_url": "./index.html",
+  "start_url": "/alarm-app/index.html",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#4CAF50",
+  "background_color": "#f5f5f7",
+  "theme_color": "#007aff",
   "icons": [
-    {
-      "src": "icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    }
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
   ]
 }
