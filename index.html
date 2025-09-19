@@ -41,4 +41,60 @@
 
 <script>
 let alarmAudio = null;
-let ala
+let alarmInterval = null;
+
+function startAlarm() {
+    stopAlarm(); // 기존 알람 중지
+
+    const value = parseInt(document.getElementById('timeValue').value);
+    const unit = document.getElementById('timeUnit').value;
+    const sound = document.getElementById('soundSelect').value;
+
+    let seconds = value;
+    if (unit === 'min') seconds *= 60;
+    else if (unit === 'hour') seconds *= 3600;
+
+    // 오디오 객체 준비 (사용자 클릭 시 1회 재생 허용)
+    alarmAudio = new Audio(sound);
+    alarmAudio.loop = true;
+
+    // Safari가 허용하도록 버튼 클릭 이벤트 안에서 먼저 실행
+    alarmAudio.play().then(() => {
+        alarmAudio.pause();
+        alarmAudio.currentTime = 0;
+
+        // 알람 실행 루프
+        alarmInterval = setInterval(() => {
+            alarmAudio.currentTime = 0;
+            alarmAudio.play();
+
+            // 5초 후 자동 정지
+            setTimeout(() => {
+                alarmAudio.pause();
+                alarmAudio.currentTime = 0;
+            }, 5000);
+
+        }, seconds * 1000);
+
+        alert(`⏰ 알람이 ${seconds}초마다 5초간 울립니다.`);
+    }).catch(err => {
+        console.log("Safari에서 오디오 시작 실패:", err);
+        alert("🔇 Safari에서 첫 재생이 허용되지 않았습니다. 다시 시도하세요.");
+    });
+}
+
+function stopAlarm() {
+    if (alarmInterval) {
+        clearInterval(alarmInterval);
+        alarmInterval = null;
+    }
+    if (alarmAudio) {
+        alarmAudio.pause();
+        alarmAudio.currentTime = 0;
+    }
+    alert("알람이 중지되었습니다.");
+}
+</script>
+
+</body>
+</html>
