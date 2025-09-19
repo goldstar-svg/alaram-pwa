@@ -1,45 +1,84 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>반복 알람</title>
-  <link rel="manifest" href="manifest.json">
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('service-worker.js');
-    }
-
-    let alarmAudio, alarmInterval;
-
-    function startAlarm() {
-      const soundFile = document.getElementById('soundSelect').value;
-      alarmAudio = new Audio(soundFile);
-      alarmAudio.play();
-      alarmInterval = setInterval(() => {
-        alarmAudio.currentTime = 0;
-        alarmAudio.play();
-      }, 5000); // 5초마다 반복
-    }
-
-    function stopAlarm() {
-      clearInterval(alarmInterval);
-      if (alarmAudio) {
-        alarmAudio.pause();
-        alarmAudio.currentTime = 0;
-      }
-    }
-  </script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>반복 알람</title>
+<style>
+    body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; padding: 20px; background: #f5f5f7; }
+    h1 { text-align: center; }
+    .card { background: white; border-radius: 12px; padding: 20px; max-width: 400px; margin: auto; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    label { display: block; margin-top: 15px; font-weight: bold; }
+    select, input, button { width: 100%; padding: 10px; margin-top: 5px; border-radius: 8px; border: 1px solid #ccc; font-size: 16px; }
+    button { background: #007aff; color: white; border: none; cursor: pointer; }
+    button:hover { background: #005ecb; }
+</style>
 </head>
 <body>
-  <h1>반복 알람</h1>
-  <select id="soundSelect">
-    <option value="radar_like.mp3">Radar 스타일</option>
-    <option value="beacon_like.mp3">Beacon 스타일</option>
-    <option value="chime_like.mp3">Chime 스타일</option>
-  </select>
-  <br><br>
-  <button onclick="startAlarm()">알람 시작</button>
-  <button onclick="stopAlarm()">알람 중지</button>
+
+<h1>반복 알람 설정</h1>
+<div class="card">
+    <label>시간 값</label>
+    <input type="number" id="timeValue" min="1" max="60" value="5">
+
+    <label>시간 단위</label>
+    <select id="timeUnit">
+        <option value="sec">초</option>
+        <option value="min">분</option>
+        <option value="hour">시간</option>
+    </select>
+
+    <label>알람 사운드</label>
+    <select id="soundSelect">
+        <option value="radar_like.mp3">Radar 스타일</option>
+        <option value="beacon_like.mp3">Beacon 스타일</option>
+        <option value="chime_like.mp3">Chime 스타일</option>
+    </select>
+
+    <button onclick="startAlarm()">알람 시작</button>
+    <button onclick="stopAlarm()" style="background:#ff3b30; margin-top:10px;">알람 중지</button>
+</div>
+
+<script>
+let alarmAudio = null;
+let alarmInterval = null;
+
+function startAlarm() {
+    stopAlarm(); // 기존 알람 중지
+
+    const value = parseInt(document.getElementById('timeValue').value);
+    const unit = document.getElementById('timeUnit').value;
+    const sound = document.getElementById('soundSelect').value;
+
+    let seconds = value;
+    if (unit === 'min') seconds *= 60;
+    else if (unit === 'hour') seconds *= 3600;
+
+    // 오디오 객체 준비
+    alarmAudio = new Audio(sound);
+    alarmAudio.loop = false;
+
+    // 알람 실행
+    alarmInterval = setInterval(() => {
+        alarmAudio.currentTime = 0;
+        alarmAudio.play();
+    }, seconds * 1000);
+
+    alert(`⏰ 알람이 ${seconds}초마다 울립니다.`);
+}
+
+function stopAlarm() {
+    if (alarmInterval) {
+        clearInterval(alarmInterval);
+        alarmInterval = null;
+    }
+    if (alarmAudio) {
+        alarmAudio.pause();
+        alarmAudio.currentTime = 0;
+    }
+    alert("알람이 중지되었습니다.");
+}
+</script>
+
 </body>
 </html>
