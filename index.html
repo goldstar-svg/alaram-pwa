@@ -19,7 +19,7 @@
 <h1>반복 알람 설정</h1>
 <div class="card">
     <label>시간 값</label>
-    <input type="number" id="timeValue" min="1" max="60" value="5">
+    <input type="number" id="timeValue" min="1" max="60" value="30">
 
     <label>시간 단위</label>
     <select id="timeUnit">
@@ -41,44 +41,4 @@
 
 <script>
 let alarmAudio = null;
-let alarmInterval = null;
-
-function startAlarm() {
-    stopAlarm(); // 기존 알람 중지
-
-    const value = parseInt(document.getElementById('timeValue').value);
-    const unit = document.getElementById('timeUnit').value;
-    const sound = document.getElementById('soundSelect').value;
-
-    let seconds = value;
-    if (unit === 'min') seconds *= 60;
-    else if (unit === 'hour') seconds *= 3600;
-
-    // 오디오 객체 준비
-    alarmAudio = new Audio(sound);
-    alarmAudio.loop = false;
-
-    // 알람 실행
-    alarmInterval = setInterval(() => {
-        alarmAudio.currentTime = 0;
-        alarmAudio.play();
-    }, seconds * 1000);
-
-    alert(`⏰ 알람이 ${seconds}초마다 울립니다.`);
-}
-
-function stopAlarm() {
-    if (alarmInterval) {
-        clearInterval(alarmInterval);
-        alarmInterval = null;
-    }
-    if (alarmAudio) {
-        alarmAudio.pause();
-        alarmAudio.currentTime = 0;
-    }
-    alert("알람이 중지되었습니다.");
-}
-</script>
-
-</body>
-</html>
+let ala
